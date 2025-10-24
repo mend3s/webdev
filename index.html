@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STAFF | Gestão de Funcionários</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"/>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="login-page" class="login-container">
+        <div class="login-box">
+            <img src="logo-collapsed.png" alt="Logo STAFF" class="login-logo">
+            <h2>Bem-vindo ao STAFF</h2>
+            <p>Faça login para continuar</p>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">E-mail</label>
+                    <input type="email" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Senha</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <div id="login-error" class="login-error-message" style="display: none;"></div>
+                <button type="submit" class="btn btn-primary btn-login">Entrar</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="app-container" style="display: none;">
+
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <img src="logo-collapsed.png" alt="Logo STAFF" class="sidebar-logo">
+                <div class="logo-text-container">
+                    <span class="logo-main-text">STAFF</span>
+                    <span class="logo-sub-text">Sistema de gestão</span>
+                </div>
+            </div>
+            <ul class="menu-links">
+                 <li class="active"> <a href="#" data-page="Home">
+                        <span class="material-symbols-outlined">home</span>
+                        <span class="link-name">Home</span>
+                    </a>
+                </li>
+                 <li>
+                    <a href="#" data-page="Funcionarios">
+                        <span class="material-symbols-outlined">contacts_product</span>
+                        <span class="link-name">Funcionarios</span>
+                    </a>
+                </li>
+                 <li>
+                    <a href="#" data-page="Ausencias">
+                        <span class="material-symbols-outlined">beach_access</span>
+                        <span class="link-name">Ausencias</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" data-page="Configuracoes">
+                        <span class="material-symbols-outlined">settings</span>
+                        <span class="link-name">Configurações</span>
+                    </a>
+                </li>
+            </ul>
+            <div class="sidebar-toggle">
+                <button id="toggle-btn">
+                    <span class="material-symbols-outlined">arrow_forward</span>
+                </button>
+            </div>
+        </nav>
+
+        <main class="main-content">
+
+            <header class="main-header">
+                <div class="header-title">
+                    <h1 id="page-title">Dashboard</h1>
+                    <p id="page-subtitle">Visão geral do sistema</p>
+                </div>
+
+                <div class="user-profile-menu" id="user-profile-menu">
+                    <button class="profile-btn" id="user-profile-button">
+                        <img src="avatar_placeholder.png" alt="Avatar" id="user-avatar">
+                        <div class="user-info">
+                            <span id="user-name">Carregando...</span>
+                            <span id="user-role">[...]</span>
+                        </div>
+                        <span class="material-symbols-outlined dropdown-icon">expand_more</span>
+                    </button>
+                    <div class="profile-dropdown" id="user-profile-dropdown">
+                        <a href="#" class="dropdown-item" data-page="Perfil">
+                            <span class="material-symbols-outlined">account_circle</span>
+                            Perfil
+                        </a>
+                        <a href="#" class="dropdown-item" data-page="Configuracoes">
+                            <span class="material-symbols-outlined">settings</span>
+                            Configurações
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item" id="logout-button">
+                            <span class="material-symbols-outlined">logout</span>
+                            Sair
+                        </a>
+                    </div>
+                </div>
+            </header>
+
+            <div class="page-wrapper">
+
+                <div id="page-home" class="page-content" style="display: none;">
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <span class="kpi-value" id="kpi-total-funcionarios">--</span>
+                            <span class="kpi-label">Total de Funcionários</span>
+                        </div>
+                        <div class="kpi-card">
+                            <span class="kpi-value" id="kpi-funcionarios-ativos">--</span>
+                            <span class="kpi-label">Funcionários Ativos</span>
+                        </div>
+                         <div class="kpi-card">
+                            <span class="kpi-value" id="kpi-ausencias-pendentes">--</span>
+                            <span class="kpi-label">Ausências Pendentes</span>
+                        </div>
+                    </div>
+                    <div class="chart-grid">
+                        <div class="chart-container">
+                            <h2>Funcionários por Departamento</h2>
+                            <div class="canvas-wrapper">
+                                <canvas id="deptChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <h2>Tipos de Ausência (Aprovadas)</h2>
+                            <div class="canvas-wrapper">
+                                <canvas id="ausenciaTipoChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <h2>Status das Solicitações</h2>
+                            <div class="canvas-wrapper">
+                                <canvas id="ausenciaStatusChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <h2>Funcionários por Senioridade (Ativos)</h2>
+                            <div class="canvas-wrapper">
+                                <canvas id="senioridadeChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="page-funcionarios" class="page-content" style="display: none;">
+                    <div class="header-actions-bar">
+                         <button class="btn btn-primary" id="btn-novo-funcionario">
+                            <span class="material-symbols-outlined">add</span>
+                            Novo Funcionário
+                        </button>
+                    </div>
+                    <div class="filter-bar">
+                        <input type="text" placeholder="ID" class="filter-input" id="filter-id">
+                        <input type="text" placeholder="Nome" class="filter-input" id="filter-nome">
+                        <input type="text" placeholder="Cargo" class="filter-input" id="filter-cargo">
+                        <button class="btn btn-secondary" id="btn-filtrar">Filtrar</button>
+                        <button class="btn btn-tertiary" id="btn-limpar">Limpar</button>
+                    </div>
+                    <div class="table-container">
+                        <table class="staff-table">
+                            <thead>
+                                <tr>
+                                    <th class="sortable" data-sort="id">ID</th>
+                                    <th class="sortable" data-sort="nome">Nome</th>
+                                    <th class="sortable" data-sort="email">E-mail</th>
+                                    <th class="sortable" data-sort="cargo">Cargo</th>
+                                    <th class="sortable" data-sort="depto">Departamento</th>
+                                    <th class="sortable" data-sort="admissao">Admissão</th>
+                                    <th class="sortable" data-sort="status">Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="funcionarios-table-body"></tbody>
+                        </table>
+                    </div>
+                    <div class="pagination-container">
+                        <span id="pagination-info"></span>
+                        <div id="pagination-controls"></div>
+                    </div>
+                </div>
+
+                <div id="page-ausencias" class="page-content" style="display: none;">
+                    <div class="header-actions-bar">
+                         <button class="btn btn-primary" id="btn-nova-ausencia">
+                            <span class="material-symbols-outlined">add_circle</span>
+                            Solicitar Ausência
+                        </button>
+                    </div>
+                    <div class="filter-bar">
+                        <input type="text" placeholder="Nome do Funcionário" class="filter-input" id="filter-aus-nome">
+                        <select id="filter-aus-tipo" class="filter-input"></select>
+                        <select id="filter-aus-status" class="filter-input">
+                            <option value="">Todos os Status</option>
+                            <option value="Pendente">Pendente</option>
+                            <option value="Aprovado">Aprovado</option>
+                            <option value="Recusado">Recusado</option>
+                        </select>
+                        <button class="btn btn-secondary" id="btn-filtrar-ausencia">Filtrar</button>
+                        <button class="btn btn-tertiary" id="btn-limpar-ausencia">Limpar</button>
+                    </div>
+                    <div class="table-container">
+                        <table class="staff-table">
+                            <thead>
+                                <tr>
+                                    <th class="sortable" data-sort="id">ID</th>
+                                    <th class="sortable col-funcionario" data-sort="funcionario">Funcionário</th> <th class="sortable" data-sort="tipo">Tipo</th>
+                                    <th class="sortable" data-sort="inicio">Início</th>
+                                    <th class="sortable" data-sort="fim">Fim</th>
+                                    <th class="sortable" data-sort="dias">Dias</th>
+                                    <th class="sortable" data-sort="status">Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ausencias-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                 <div id="page-configuracoes" class="page-content" style="display: none;">  
+
+                    <div class="config-section user-management-section">
+                        <h3>Gerenciamento de Usuários</h3>
+
+                        <div class="card">
+                            <h4>Adicionar Novo Usuário</h4>
+                            <form id="add-user-form">
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="new-user-name">Nome Completo*</label>
+                                        <input type="text" id="new-user-name" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="new-user-email">E-mail*</label>
+                                        <input type="email" id="new-user-email" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="new-user-password">Senha Provisória*</label>
+                                        <input type="password" id="new-user-password" required minlength="6">
+                                         <small>Mínimo 6 caracteres.</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="new-user-role">Papel (Role)*</label>
+                                        <select id="new-user-role" required>
+                                            <option value="" disabled selected>Selecione o papel...</option>
+                                            <option value="Administrador">Administrador</option>
+                                            <option value="Gestor">Gestor</option>
+                                            <option value="Usuario">Usuário</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                 <div id="add-user-message" class="user-message" style="display: none; margin-top: 1rem;"></div>
+                                <div class="modal-actions" style="margin-top: 1.5rem;">
+                                    <button type="submit" class="btn btn-primary">
+                                        <span class="material-symbols-outlined">person_add</span>
+                                        Criar Usuário
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="page-perfil" class="page-content" style="display: none;">
+                    <h2>Meu Perfil</h2>
+                    <p>Em breve: editar suas informações, trocar sua foto.</p>
+                </div>
+
+            </div> </main> </div> <div id="funcionario-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <form id="funcionario-form">
+                <div class="modal-header">
+                    <h2 id="modal-title">Adicionar Novo Funcionário</h2>
+                    <button type="button" class="btn-close-modal" id="btn-close-modal">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+                <input type="hidden" id="funcionarioId" name="id">
+                <div class="form-top-section">
+                    <div class="form-image-upload">
+                        <div class="image-placeholder">
+                            <span class="material-symbols-outlined">person</span>
+                        </div>
+                        <div class="image-upload-actions">
+                            <button type="button" class="btn btn-outline-orange btn-sm">
+                                <span class="material-symbols-outlined">upload</span>Atualize a Imagem
+                            </button>
+                            <button type="button" class="btn btn-outline-orange btn-sm">
+                                <span class="material-symbols-outlined">delete</span>Remover a Imagem
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-status-toggle">
+                        <label>Status</label>
+                        <span class="status-badge" id="status-badge-text">Ativo</span>
+                        <label class="switch">
+                            <input type="checkbox" id="status-toggle" checked>
+                            <span class="slider round"></span>
+                        </label>
+                        <input type="hidden" id="status" name="status" value="Ativo">
+                    </div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group"><label for="nome">Nome Completo*</label><input type="text" id="nome" name="nome" required></div>
+                    <div class="form-group"><label for="email">E-mail*</label><input type="email" id="email" name="email" required></div>
+                    <div class="form-group"><label for="telefone">Telefone</label><input type="text" id="telefone" name="telefone"></div>
+                    <div class="form-group"><label for="data_nascimento">Data de Nascimento</label><input type="date" id="data_nascimento" name="data_nascimento"></div>
+                    <div class="form-group"><label for="departamento_id">Departamento</label><select id="departamento_id" name="departamento_id"></select></div>
+                    <div class="form-group"><label for="cargo_id">Cargo</label><select id="cargo_id" name="cargo_id"></select></div>
+                    <div class="form-group"><label for="data_admissao">Data de Admissão</label><input type="date" id="data_admissao" name="data_admissao"></div>
+                    <div class="form-group"><label for="salario">Salário</label><input type="number" step="0.01" id="salario" name="salario"></div>
+                    <div class="form-group"><label for="endereco">Endereço</label><input type="text" id="endereco" name="endereco"></div>
+                    <div class="form-group"><label for="cidade">Cidade</label><input type="text" id="cidade" name="cidade"></div>
+                    <div class="form-group"><label for="estado">Estado</label><input type="text" id="estado" name="estado"></div>
+                    <div class="form-group"><label for="cep">CEP</label><input type="text" id="cep" name="cep"></div>
+                    <div class="form-group"><label for="pais">País</label><input type="text" id="pais" name="pais"></div>
+                    <div class="form-group"><label for="genero">Gênero</label><input type="text" id="genero" name="genero"></div>
+                    <div class="form-group"><label for="nacionalidade">Nacionalidade</label><input type="text" id="nacionalidade" name="nacionalidade"></div>
+                    <div class="form-group"><label for="numero_identificacao">Nº Identificação</label><input type="text" id="numero_identificacao" name="numero_identificacao"></div>
+                    <div class="form-group"><label for="banco_id">Banco</label><select id="banco_id" name="banco_id"></select></div>
+                    <div class="form-group"><label for="senioridade_id">Senioridade</label><select id="senioridade_id" name="senioridade_id"></select></div>
+                    <div class="form-group"><label for="agencia">Agência</label><input type="text" id="agencia" name="agencia"></div>
+                    <div class="form-group"><label for="conta">Conta</label><input type="text" id="conta" name="conta"></div>
+                    <div class="form-group"><label for="tipo_contrato">Tipo de Contrato</label><input type="text" id="tipo_contrato" name="tipo_contrato"></div>
+                    <div class="form-group"><label for="jornada_trabalho">Jornada de Trabalho</label><input type="text" id="jornada_trabalho" name="jornada_trabalho"></div>
+                    <div class="form-group form-group-full-width"><label for="beneficios">Benefícios</label><select id="beneficios" name="beneficios" multiple></select></div>
+                    <div class="form-group form-group-full-width"><label for="observacoes">Observações</label><textarea id="observacoes" name="observacoes" rows="3"></textarea></div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline-orange" id="btn-cancelar-modal">
+                        <span class="material-symbols-outlined">cancel</span>Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <span class="material-symbols-outlined">save</span>Salvar Funcionário
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="confirm-delete-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content modal-sm">
+            <h2 class="modal-title-warning">Inativar Usuário</h2>
+            <p class="modal-text">Tem certeza de que deseja <strong>inativar</strong> este usuário?<br>O status será alterado para 'Inativo'.</p>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-tertiary" id="btn-cancel-delete">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="btn-confirm-delete"><span class="material-symbols-outlined">delete</span>Inativar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="ausencia-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <form id="ausencia-form">
+                <div class="modal-header">
+                    <h2 id="ausencia-modal-title">Solicitar Ausência</h2>
+                    <button type="button" class="btn-close-modal" id="btn-close-ausencia-modal">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group form-group-full-width">
+                        <label for="ausencia_funcionario_id">Funcionário*</label>
+                        <select id="ausencia_funcionario_id" name="funcionario_id" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipo_ausencia_id">Tipo de Ausência*</label>
+                        <select id="tipo_ausencia_id" name="tipo_ausencia_id" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Saldo de Férias</label>
+                        <input type="text" id="saldo-ferias-display" value="N/A" disabled style="background:#f4f5f7;">
+                    </div>
+                    <div class="form-group">
+                        <label for="data_inicio">Data de Início*</label>
+                        <input type="date" id="data_inicio" name="data_inicio" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="data_fim">Data de Fim*</label>
+                        <input type="date" id="data_fim" name="data_fim" required>
+                    </div>
+                    <div class="form-group form-group-full-width">
+                        <label for="motivo_solicitante">Motivo / Observação</label>
+                        <textarea id="motivo_solicitante" name="motivo_solicitante" rows="3"></textarea>
+                    </div>
+                    <div class="form-group form-group-full-width">
+                        <label for="anexo">Anexo (Ex: Atestado Médico)</label>
+                        <input type="file" id="anexo" name="anexo" class="form-input-file">
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-tertiary" id="btn-cancelar-ausencia">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">
+                        <span class="material-symbols-outlined">send</span>Enviar Solicitação
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="confirm-reject-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content modal-sm">
+            <h2 class="modal-title-warning">Recusar Solicitação</h2>
+            <p class="modal-text">Por favor, informe a justificativa para a recusa (obrigatório):</p>
+            <textarea id="rejeicao-justificativa" rows="4"></textarea>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-tertiary" id="btn-cancel-reject">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="btn-confirm-reject">
+                    <span class="material-symbols-outlined">cancel</span>Confirmar Recusa
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
